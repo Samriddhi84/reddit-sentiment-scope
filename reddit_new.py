@@ -21,7 +21,7 @@ def fetch_post():
         count = 0
         posts_data=[]
         for post in subreddit.hot(limit=10):
-
+            # keeping fetched data together so that can be used for filtering data later
             posts_data.append({
                 "title": post.title,
                 "score":post.score,
@@ -37,7 +37,13 @@ def fetch_post():
             readable = datetime.fromtimestamp(post.created_utc).strftime("%Y-%m-%d %H:%M:%S")
             writter.writerow([post.id,post.title, post.score, post.created_utc,readable,top_comments[0],top_comments[1],top_comments[2]])
             print("Fetched and saved post:",post.title)
+        
+        high_engaging_posts = [
+            post for post in posts_data if post["num_comments"]>20
+        ]
         print("Total number of posts fetched: ",count)
         print("Length of post data: ",len(posts_data))
+        print(posts_data[0])
+        print("High engaging posts: ",high_engaging_posts)
 
 fetch_post()
