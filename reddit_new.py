@@ -19,7 +19,15 @@ def fetch_post():
         writter = csv.writer(csvfile)
         # writter.writerow(["title","score","created_utc","readable_time","comment_1","comment_2","comment_3"])
         count = 0
+        posts_data=[]
         for post in subreddit.hot(limit=10):
+
+            posts_data.append({
+                "title": post.title,
+                "score":post.score,
+                "num_comments": post.num_comments,
+                "created_utc": post.created_utc
+            })
             post.comments.replace_more(limit=0)
             top_comments = [c.body.replace("\n"," ") for c in post.comments[:3]]
             # if fewer exist
@@ -30,5 +38,6 @@ def fetch_post():
             writter.writerow([post.id,post.title, post.score, post.created_utc,readable,top_comments[0],top_comments[1],top_comments[2]])
             print("Fetched and saved post:",post.title)
         print("Total number of posts fetched: ",count)
+        print("Length of post data: ",len(posts_data))
 
 fetch_post()
