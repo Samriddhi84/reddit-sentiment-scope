@@ -4,6 +4,10 @@ import praw
 import prawcore
 import csv
 from datetime import datetime
+import pandas as pd
+from vaderSentiment import SentimentIntensityAnalyzer
+
+analyzer = SentimentIntensityAnalyzer()
 
 reddit = praw.Reddit(
     client_id = "pqoKREKzIuDGIVYmk7p4Rw",
@@ -20,7 +24,7 @@ def fetch_post():
         # writter.writerow(["title","score","created_utc","readable_time","comment_1","comment_2","comment_3"])
         count = 0
         posts_data=[]
-        for post in subreddit.hot(limit=10):
+        for post in subreddit.hot(limit=5):
             # keeping fetched data together so that can be used for filtering data later
             posts_data.append({
                 "title": post.title,
@@ -44,6 +48,13 @@ def fetch_post():
         print("Total number of posts fetched: ",count)
         print("Length of post data: ",len(posts_data))
         print(posts_data[0])
-        print("High engaging posts: ",high_engaging_posts)
+        # print("High engaging posts: ",high_engaging_posts)
+        df = pd.DataFrame(high_engaging_posts)
+        df["engagement_score"] = df["score"] + df["num_comments"]
+        print(df.head(5))
+        
+#         print(df[["title", "engagement_score"]].sort_values(
+#     by="engagement_score", ascending=False
+# ).head(5))
 
 fetch_post()
